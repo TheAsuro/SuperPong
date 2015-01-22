@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Pong</title>
+	
+	<style type="text/css">
+	body {
+		margin: auto;
+		display: block;
+		text-align: center;
+	}
+	#gamecanvas {
+		margin: auto;
+		background-color: #000000;
+		display: block;
+		border-style: solid;
+		border-width: 3px;
+		border-color: #FF0000;
+	}
+	</style>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+	<script type="text/javascript">
+
+	var canvas;
+	var ctx;
+
+	var canvasScale = 0.5;
+
+	var cursorSpeed = 5;
+	var cursorHeight = 30;
+
+	var leftVerticalPos = 0;
+	var rightVerticalPos = 0;
+
+	var ballX = 0;
+	var ballY = 0;
+
+	var ballVelocityX = 0;
+	var ballVelocityY = 0;
+
+	var upKeyDown = false;
+	var downKeyDown = false;
+
+	var lastBallSpeed = 0;
+	var gotBallUpdate = false;
+
+	var sendCycle = true;
+	var socket;
+
+	$(window).ready(function() 
+	{
+		//Get canvas and drawing context
+		canvas = document.getElementById("gamecanvas");
+		ctx = canvas.getContext("2d");
+
+		leftVerticalPos = canvas.height / 2;
+		rightVerticalPos = canvas.height / 2;
+
+		
+		socket = new WebSocket("ws://theasuro.de:42096");
+		socket.onopen = start;
+		socket.onmessage = message;
+		socket.onerror = error;
+	});
+
+	function start()
+	{
+		window.setInterval(updateGame, 13);
+		setInfoText("Connected");
+	}
+
+	function message(m)
+	{
+		if(strStartsWith(m.data, "ball"))
+		{
+			balldata = m.data.substring(4).split("|");
+			ballX = parseInt(balldata[0]) * canvasScale;
+			ballY = parseInt(balldata[1]) * canvasScale;
+			lastBallSpeed = parseInt(balldata[2]) * canvasScale / 2;
+			gotBallUpdate = true;
+		}
+		if(strStartsWith(m.data, "pos"))
+		{
+			posdata = m.data.substring(3);
+			rightVerticalPos = parseInt(posdata) * canvasScale;
+		}
+	}
+
+	function error(e)
+	{
+		setInfoText("Error: " + e);
+	}
+
+	function updateGame()
+	{
+		if(upKeyDown)
+			leftVerticalPos -= cursorSpeed;
+
+		if(downKeyDown)
+			leftVerticalPos += cursorSpeed;
+
+		if(leftVerticalPos < cursorHeight / 2)
+			leftVerticalPos = cursorHeight / 2;
+
+		if(leftVerticalPos > canvas.height - cursorHeight / 2)
+			leftVerticalPos = canvas.height - cursorHeight / 2;
+
+		if(!gotBallUpdate)
+		{
+			ballX += lastBallSpeed;
+		}
+		gotBallUpdate = false;
+
+		//Send cursor position every second update
+		if(sendCycle)
+		{
+			socket.send("pos" + (leftVerticalPos * (1 / canvasScale)));
+		}
+		sendCycle = !sendCycle;
+
+		draw();
+	}
+
+	function draw()
+	{
+		//Clear canvas
+		ctx.beginPath();
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		//Draw center line
+		ctx.moveTo(canvas.width / 2, 0);
+		ctx.lineTo(canvas.width / 2, canvas.height);
+		ctx.lineWidth = 10;
+		ctx.strokeStyle = "#FFFFFF";
+		ctx.stroke();
+
+		//Draw left cursor
+		ctx.moveTo(100, leftVerticalPos - cursorHeight);
+		ctx.lineTo(100, leftVerticalPos + cursorHeight);
+		ctx.strokeStyle = "#FFFFFF";
+		ctx.lineWidth = 6;
+		ctx.stroke();
+
+		//Draw right cursor
+		ctx.moveTo(canvas.width - 100, rightVerticalPos - cursorHeight);
+		ctx.lineTo(canvas.width - 100, rightVerticalPos + cursorHeight);
+		ctx.strokeStyle = "#FFFFFF";
+		ctx.lineWidth = 6;
+		ctx.stroke();
+
+		//Draw ball
+		ctx.moveTo(ballX, ballY - 3);
+		ctx.lineTo(ballX, ballY + 3);
+		ctx.strokeStyle = "#FFFFFF";
+		ctx.lineWidth = 6;
+		ctx.stroke();
+	}
+
+	$(document).keydown(function (event) 
+	{
+		if(event.keyCode == 87)
+			upKeyDown = true;
+
+		if(event.keyCode == 83)
+			downKeyDown = true;
+	});
+
+	$(document).keyup(function (event) 
+	{
+		if(event.keyCode == 87)
+			upKeyDown = false;
+
+		if(event.keyCode == 83)
+			downKeyDown = false;
+	});
+
+	function strStartsWith(str, prefix) {
+	    return str.indexOf(prefix) === 0;
+	}
+
+	function setInfoText(txt)
+	{
+		$("#output").text(txt);
+	}
+	</script>
+</head>
+
+<body>
+	<h1>Pong</h1>
+	<canvas id="gamecanvas" width="640px" height="360px"></canvas>
+	<p id="output">-</p>
+</body>
+</html>
