@@ -5,6 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PongServer", "PongServer.cs
 EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Pakete", "Pakete.mdproj", "{76A3A76C-5469-4EDF-AC08-5F1C5E8D4E21}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3CE6CED-F782-4817-9A50-B3A8E0837A21}"
+	ProjectSection(SolutionItems) = preProject
+		pong.html = pong.html
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -17,6 +22,8 @@ Global
 		{F608A5FE-21A3-41B5-8FFB-3D1DC260CD08}.Debug|x86.Build.0 = Debug|x86
 		{F608A5FE-21A3-41B5-8FFB-3D1DC260CD08}.Release|x86.ActiveCfg = Release|x86
 		{F608A5FE-21A3-41B5-8FFB-3D1DC260CD08}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
