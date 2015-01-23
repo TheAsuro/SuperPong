@@ -10,8 +10,9 @@ namespace PongServer
 	enum LogLevel
 	{
 		messages = 0,
-		connections = 1,
-		none = 2
+		game = 1,
+		connections = 2,
+		none = 3
 	}
 
 	class MainClass
@@ -60,7 +61,7 @@ namespace PongServer
 			server.OnConnected += OnOpen;
 			server.OnReceive += OnMessage;
 			server.OnDisconnect += OnClose;
-			WriteLogMessage("Started server at " + address.ToString(), 2);
+			WriteLogMessage("Started server at " + address.ToString(), 3);
 
 			//Start reading console
 			while(true)
@@ -191,7 +192,7 @@ namespace PongServer
 			throw new Exception("Found no IP adress!");
 		}
 
-		public static void WriteLogMessage(string message, int level = 1)
+		public static void WriteLogMessage(string message, int level = 2)
 		{
 			if(level >= (int)myLogLevel)
 			{

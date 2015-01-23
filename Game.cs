@@ -111,15 +111,17 @@ namespace PongServer
 			ballPos = ballPos + ballSpeed;
 
 			//Check if ball is in range for cursor check (just moved "over" the x position of one of the cursors)
-			if(old.x > xCursorCheckPosition && ballPos.x < xCursorCheckPosition && ballPos.x < playfieldSize.x / 2)
+			if(old.x > xCursorCheckPosition && ballPos.x <= xCursorCheckPosition)
 			{
+				MainClass.WriteLogMessage("Left collision check.", 1);
 				//Check if cursor was at the correct height
 				cursorCollisionCheck(leftVerticalPos, old.y);
 			}
 
 			//Same for right cursor
-			if(old.x < playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x / 2)
+			if(old.x < playfieldSize.x - xCursorCheckPosition && ballPos.x >= playfieldSize.x - xCursorCheckPosition)
 			{
+				MainClass.WriteLogMessage("Right collision check.", 1);
 				cursorCollisionCheck(rightVerticalPos, old.y);
 			}
 
@@ -184,6 +186,10 @@ namespace PongServer
 
 				//Position on the cursor determines vertical speed
 				ballSpeed.y = (ballPos.y - cursorY) / halfCursorHeight * verticalReflectionSpeed;
+			}
+			else
+			{
+				MainClass.WriteLogMessage("Player failed: Cursor=" + cursorY + " NewBall=" + ballPos.y + " OldBall=" + oldBallY, 1);
 			}
 		}
 
