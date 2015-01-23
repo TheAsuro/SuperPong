@@ -129,6 +129,10 @@ namespace PongServer
 			{
 				Score("r");
 			}
+			if(ballPos.y > playfieldSize.y || ballPos.y < 0)
+			{
+				ballPos.y *= -1;
+			}
 		}
 
 		//Someone got a point
@@ -182,7 +186,7 @@ namespace PongServer
 
 		public Vector2 GetBallSpeed(bool reversed = false)
 		{
-			if(reversed) { return ballSpeed * new Vector2(-1, -1); }
+			if(reversed) { return ballSpeed * new Vector2(-1, 1); }
 			return ballSpeed;
 		}
 	}
