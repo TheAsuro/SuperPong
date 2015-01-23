@@ -62,10 +62,11 @@ namespace PongServer
 	{
 		private const int maxPoints = 10;
 		private const int defaultStartSpeed = 10;
+		private const int additinalSpeed = 1;
 		private const int xCursorCheckPosition = 102;
-		private const int halfCursorHeight = 30;
+		private const int halfCursorHeight = 20;
 		private const int halfBallHeight = 2;
-		private const int verticalReflectionSpeed = 5;
+		private const int verticalReflectionSpeed = 10;
 
 		private Vector2 ballPos = new Vector2(0,0);
 		private Vector2 ballSpeed = new Vector2(0,0);
@@ -175,7 +176,7 @@ namespace PongServer
 			if(cursorY + halfBallHeight + halfCursorHeight > ballPos.y && cursorY - halfBallHeight - halfCursorHeight < ballPos.y)
 			{
 				//Reverse horizontal speed
-				ballSpeed.x *= -1;
+				ballSpeed.x = (ballSpeed.x + additinalSpeed) * -1;
 
 				//Position on the cursor determines vertical speed
 				ballSpeed.y = (ballPos.y - cursorY) / halfCursorHeight * verticalReflectionSpeed;
