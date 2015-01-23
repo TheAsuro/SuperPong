@@ -95,7 +95,7 @@ namespace PongServer
 		
 		private void StartNewGame()
 		{
-			myGame = new Game();
+			myGame = new Game(GameScoreUpdate);
 
 			tickTimer = new Timer(26);
 			tickTimer.Elapsed += Update;
@@ -109,6 +109,13 @@ namespace PongServer
 			string leftBallString = "ball" + myGame.GetBallPosition(false).ToIntString() + "|" + myGame.GetBallSpeed(false).ToIntString();
 			string rightBallString = "ball" + myGame.GetBallPosition(true).ToIntString() + "|" + myGame.GetBallSpeed(true).ToIntString(); //Send reversed values for right player
 			SendToBoth(leftBallString, rightBallString);
+		}
+
+		private void GameScoreUpdate()
+		{
+			string leftMessage = "score" + myGame.GetLeftPoints() + "|" + myGame.GetRightPoints();
+			string rightMessage = "score" + myGame.GetRightPoints() + "|" + myGame.GetLeftPoints();
+			SendToBoth(leftMessage, rightMessage);
 		}
 
 		//Send the same message to both players

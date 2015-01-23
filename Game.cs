@@ -60,6 +60,9 @@ namespace PongServer
 
 	public class Game
 	{
+		public delegate void ScoreUpdate();
+		private ScoreUpdate newScore;
+
 		private const int maxPoints = 10;
 		private const int defaultStartSpeed = 10;
 		private const int additinalSpeed = 1;
@@ -79,8 +82,9 @@ namespace PongServer
 		private int leftPoints = 0;
 		private int rightPoints = 0;
 		
-		public Game()
+		public Game(ScoreUpdate update)
 		{
+			newScore = update;
 			Reset();
 		}
 
@@ -97,28 +101,26 @@ namespace PongServer
 		{
 			ballPos = new Vector2(playfieldSize.x / 2, playfieldSize.y / 2);
 			ballSpeed = new Vector2(startSpeed, 0);
-			leftVerticalPos = (int)playfieldSize.y / 2;
-			rightVerticalPos = (int)playfieldSize.y / 2;
 		}
 		
 		public void Update()
 		{
-			float oldX = ballPos.x;
+			Vector2 old = ballPos;
 
 			//Move ball
 			ballPos = ballPos + ballSpeed;
 
 			//Check if ball is in range for cursor check (just moved "over" the x position of one of the cursors)
-			if(oldX > xCursorCheckPosition && ballPos.x < xCursorCheckPosition && ballPos.x < playfieldSize.x / 2)
+			if(old.x > xCursorCheckPosition && ballPos.x < xCursorCheckPosition && ballPos.x < playfieldSize.x / 2)
 			{
 				//Check if cursor was at the correct height
-				cursorCollisionCheck(leftVerticalPos);
+				cursorCollisionCheck(leftVerticalPos, old.y);
 			}
 
 			//Same for right cursor
-			if(oldX < playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x / 2)
+			if(old.x < playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x / 2)
 			{
-				cursorCollisionCheck(rightVerticalPos);
+				cursorCollisionCheck(rightVerticalPos, old.y);
 			}
 
 			//Did the ball move out of the playfield?
@@ -155,6 +157,7 @@ namespace PongServer
 				EndCheck();
 				ResetBall(defaultStartSpeed);
 			}
+			newScore();
 		}
 
 		//Check if someone reached the maximum points and won the round
@@ -170,10 +173,11 @@ namespace PongServer
 			}
 		}
 
-		private void cursorCollisionCheck(int cursorY)
+		private void cursorCollisionCheck(int cursorY, float oldBallY)
 		{
 			//Is the cursor at the right position?
-			if(cursorY + halfBallHeight + halfCursorHeight > ballPos.y && cursorY - halfBallHeight - halfCursorHeight < ballPos.y)
+			if(cursorY + halfBallHeight + halfCursorHeight > ballPos.y && cursorY - halfBallHeight - halfCursorHeight < ballPos.y
+				|| cursorY + halfBallHeight + halfCursorHeight > oldBallY && cursorY - halfBallHeight - halfCursorHeight < oldBallY)
 			{
 				//Reverse horizontal speed
 				ballSpeed.x = (ballSpeed.x + additinalSpeed) * -1;
@@ -193,6 +197,16 @@ namespace PongServer
 		{
 			if(reversed) { return ballSpeed * new Vector2(-1, 1); }
 			return ballSpeed;
+		}
+
+		public int GetLeftPoints()
+		{
+			return leftPoints;
+		}
+
+		public int GetRightPoints()
+		{
+			return rightPoints;
 		}
 	}
 }
