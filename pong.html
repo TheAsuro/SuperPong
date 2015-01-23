@@ -31,6 +31,7 @@
 	var ctx;
 
 	var playerName;
+	var serverName;
 	var statusText = "-";
 	var inGame = false;
 
@@ -75,10 +76,11 @@
 	{
 		//Read player name
 		playerName = $("#namefield").val();
+		serverName = $("#serverfield").val();
 
-		if(playerName == "")
+		if(playerName == "" || serverName == "")
 		{
-			alert("Please enter a valid name!");
+			alert("Please enter name and server!");
 			return;
 		}
 
@@ -87,7 +89,7 @@
 		statusText = "Connecting...";
 
 		//Try to connect to the server
-		socket = new WebSocket("ws://theasuro.de:42096");
+		socket = new WebSocket(serverName);
 		socket.onopen = connected;
 		socket.onmessage = message;
 		socket.onerror = error;
@@ -252,8 +254,9 @@
 <body>
 	<h1 class="header">SuperPong</h1>
 	<form>
-		<p class="header">Name: <input id="namefield" type="text" size="16" maxlength="16">
-		<input type="button" onclick="startGame();" value="OK"></p>
+		<p class="header">Server: <input id="serverfield" type="text" size="16" maxlength="64" value="ws://theasuro.de:42096"></p>
+		<p class="header">Name: <input id="namefield" type="text" size="16" maxlength="16"></p>
+		<p class="header"><input type="button" onclick="startGame();" value="OK"></p>
 	</form>
 	<canvas id="gamecanvas" width="1280" height="720"></canvas>
 	<p id="output" class="header">-</p>
