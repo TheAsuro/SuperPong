@@ -106,8 +106,8 @@ namespace PongServer
 		private void Update(object sender, ElapsedEventArgs e)
 		{
 			myGame.Update();
-			string leftBallString = "ball" + myGame.GetBallPosition(false) + "|" + myGame.GetBallSpeed(false).x;
-			string rightBallString = "ball" + myGame.GetBallPosition(true) + "|" + myGame.GetBallSpeed(true).x; //Send reversed values for right player
+			string leftBallString = "ball" + myGame.GetBallPosition(false).ToIntString() + "|" + myGame.GetBallSpeed(false).ToIntString();
+			string rightBallString = "ball" + myGame.GetBallPosition(true).ToIntString() + "|" + myGame.GetBallSpeed(true).ToIntString(); //Send reversed values for right player
 			SendToBoth(leftBallString, rightBallString);
 		}
 
