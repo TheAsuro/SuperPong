@@ -100,7 +100,7 @@
 
 	function message(m)
 	{
-		statustext = m.data;
+		console.log(m.data);
 
 		if(strStartsWith(m.data, "wait"))
 		{
@@ -108,9 +108,10 @@
 			statusText = "Waiting for second player.";
 			inGame = false;
 			window.clearInterval(gameLoop);
-			window.setInterval(drawMenu, 13);
+			menuLoop = window.setInterval(drawMenu, 13);
+			console.log("l|stopped game");
 		}
-		if(strStartsWith(m.data, "ball"))
+		else if(strStartsWith(m.data, "ball"))
 		{
 			//Start drawing the game instead of the menu
 			if(!inGame)
@@ -118,6 +119,7 @@
 				inGame = true;
 				window.clearInterval(menuLoop);
 				gameLoop = window.setInterval(updateGame, 13);
+				console.log("l|started game");
 			}
 
 			//Set ball position and save speed
@@ -127,7 +129,7 @@
 			lastBallSpeed = parseInt(balldata[2]) / 2;
 			gotBallUpdate = true;
 		}
-		if(strStartsWith(m.data, "pos"))
+		else if(strStartsWith(m.data, "pos"))
 		{
 			posdata = m.data.substring(3);
 			rightVerticalPos = parseInt(posdata);
