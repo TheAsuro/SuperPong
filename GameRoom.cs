@@ -30,7 +30,7 @@ namespace PongServer
 		public GameRoom(UserContext socket)
 		{
 			firstPlayer = socket;
-			firstPlayer.Send ("wait");
+			firstPlayer.Send("wait");
 			Console.WriteLine("Created new room.");
 		}
 		
@@ -54,6 +54,7 @@ namespace PongServer
 			if(removePlayer.Equals(firstPlayer))
 			{
 				firstPlayer = secondPlayer;
+				secondPlayer = null;
 			}
 			else
 			{
