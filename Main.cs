@@ -60,7 +60,7 @@ namespace PongServer
 			server.OnConnected += OnOpen;
 			server.OnReceive += OnMessage;
 			server.OnDisconnect += OnClose;
-			Console.WriteLine("Started server at " + address.ToString());
+			WriteLogMessage("Started server at " + address.ToString(), 0);
 
 			//Start reading console
 			while(true)
@@ -83,13 +83,13 @@ namespace PongServer
 		private static void OnOpen(UserContext connection)
 		{
 			allSockets.Add(connection,"");
-			Console.WriteLine("Connection opened.");
+			WriteLogMessage("Connection opened.");
 			FindRoomForPlayer(connection);
 		}
 		
 		private static void OnClose(UserContext connection)
 		{
-			Console.WriteLine("Connection closed. Name: " + allSockets[connection]);
+			WriteLogMessage("Connection closed. Name: " + allSockets[connection]);
 			allSockets.Remove(connection);
 
 			//Look through the rooms to find the disconnected player
@@ -99,14 +99,14 @@ namespace PongServer
 			{
 				//Room has one player left, set back to waiting state
 				room.RemovePlayerFromRoom(connection);
-				Console.WriteLine("Reset room #" + roomList.IndexOf(room) + ".");
+				WriteLogMessage("Reset room #" + roomList.IndexOf(room) + ".");
 			}
 			else
 			{
 				//Last player disconnected, remove room
 				string roomId = roomList.IndexOf(room).ToString();
 				roomList.Remove(room);
-				Console.WriteLine("Removed room #" + roomId + ".");
+				WriteLogMessage("Removed room #" + roomId + ".");
 				return;
 			}
 		}
@@ -150,9 +150,12 @@ namespace PongServer
 
 		private static void InterpretMessage(UserContext user, string message)
 		{
+			WriteLogMessage(message, 2);
+
 			if(message.StartsWith("name"))
 			{
 				allSockets[user] = message.Substring(4);
+
 			}
 			else if(message.StartsWith("pos"))
 			{
@@ -169,7 +172,7 @@ namespace PongServer
 			}
 			else
 			{
-				Console.WriteLine("Unknown message: " + message);
+				WriteLogMessage("Unknown message: " + message);
 			}
 		}
 
@@ -186,6 +189,14 @@ namespace PongServer
 				}
 			}
 			throw new Exception("Found no IP adress!");
+		}
+
+		public static void WriteLogMessage(string message, int level = 1)
+		{
+			if(level >= (int)myLogLevel)
+			{
+				Console.WriteLine(message);
+			}
 		}
 	}
 }

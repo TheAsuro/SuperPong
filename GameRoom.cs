@@ -31,7 +31,7 @@ namespace PongServer
 		{
 			firstPlayer = socket;
 			firstPlayer.Send("wait");
-			Console.WriteLine("Created new room.");
+			MainClass.WriteLogMessage("Created new room.");
 		}
 		
 		//Let a second player join
@@ -40,7 +40,7 @@ namespace PongServer
 			if(!isFull())
 			{
 				secondPlayer = socket;
-				Console.WriteLine("A room was filled.");
+				MainClass.WriteLogMessage("A room was filled.");
 				StartNewGame();
 			}
 			else
@@ -64,7 +64,7 @@ namespace PongServer
 
 			tickTimer.Enabled = false;
 			firstPlayer.Send("wait");
-			Console.WriteLine("Removed player from a room.");
+			MainClass.WriteLogMessage("Removed player from a room.");
 		}
 
 		public List<UserContext> GetPlayers()
