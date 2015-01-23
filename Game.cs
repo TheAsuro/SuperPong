@@ -108,14 +108,14 @@ namespace PongServer
 			ballPos = ballPos + ballSpeed;
 
 			//Check if ball is in range for cursor check (just moved "over" the x position of one of the cursors)
-			if((oldX > xCursorCheckPosition && ballPos.x < xCursorCheckPosition))
+			if(oldX > xCursorCheckPosition && ballPos.x < xCursorCheckPosition && ballPos.x < playfieldSize / 2)
 			{
 				//Check if cursor was at the correct height
 				cursorCollisionCheck(leftVerticalPos);
 			}
 
 			//Same for right cursor
-			if(oldX < playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x - xCursorCheckPosition)
+			if(oldX < playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize / 2)
 			{
 				cursorCollisionCheck(rightVerticalPos);
 			}
@@ -129,7 +129,11 @@ namespace PongServer
 			{
 				Score("r");
 			}
-			if(ballPos.y > playfieldSize.y || ballPos.y < 0)
+			if(ballPos.y > playfieldSize.y && ballSpeed.y > 0)
+			{
+				ballPos.y *= -1;
+			}
+			if(ballPos.y < 0 && ballSpeed.y < 0)
 			{
 				ballPos.y *= -1;
 			}
