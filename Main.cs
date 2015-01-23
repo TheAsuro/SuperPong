@@ -155,7 +155,7 @@ namespace PongServer
 			if(message.StartsWith("name"))
 			{
 				allSockets[user] = message.Substring(4);
-
+				WriteLogMessage("User logged in: " + allSockets [user]);
 			}
 			else if(message.StartsWith("pos"))
 			{
