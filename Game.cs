@@ -55,15 +55,18 @@ namespace PongServer
 
 	public class Game
 	{
+		private const int maxPoints = 10;
+		private const int defaultStartSpeed = 10;
+		private const int xCursorCheckPosition = 102;
+		private const int cursorHeight = 60;
+
 		private Vector2 ballPos = new Vector2(0,0);
 		private Vector2 ballSpeed = new Vector2(0,0);
-		
+
 		private Vector2 playfieldSize = new Vector2(1280, 720);
-		private int maxPoints = 10;
-		private int defaultStartSpeed = 10;
 		
-		public float leftVerticalPos = 0;
-		public float rightVerticalPos = 0;
+		public int leftVerticalPos = 0;
+		public int rightVerticalPos = 0;
 		
 		private int leftPoints = 0;
 		private int rightPoints = 0;
@@ -92,8 +95,25 @@ namespace PongServer
 		
 		public void Update()
 		{
+			int oldX = ballPos.x;
+
+			//Move ball
 			ballPos = ballPos + ballSpeed;
 
+			//Check if ball is in range for cursor check (just moved "over" the x position of one of the cursors)
+			if((oldX > xCursorCheckPosition && ballPos.x < xCursorCheckPosition))
+			{
+				//Check if cursor was at the correct height
+				cursorCollisionCheck(leftVerticalPos);
+			}
+
+			//Same for right cursor
+			if(oldX < playfieldSize.x - xCursorCheckPosition && ballPos.x > playfieldSize.x - xCursorCheckPosition)
+			{
+				cursorCollisionCheck(rightVerticalPos);
+			}
+
+			//Did the ball move out of the playfield?
 			if(ballPos.x > playfieldSize.x)
 			{
 				Score("l");
@@ -131,6 +151,15 @@ namespace PongServer
 			else if(rightPoints >= maxPoints)
 			{
 
+			}
+		}
+
+		private void cursorCollisionCheck(int cursorY)
+		{
+			int halfHeight = cursorHeight / 2;
+			if(cursorY + halfHeight > ballPos.y && cursorY - halfHeight < ballPos.y)
+			{
+				ballSpeed.x *= -1;
 			}
 		}
 

@@ -9,9 +9,9 @@ namespace PongServer
 {
 	enum LogLevel
 	{
-		none = 0,
+		messages = 0,
 		connections = 1,
-		messages = 2
+		none = 2
 	}
 
 	class MainClass
@@ -60,7 +60,7 @@ namespace PongServer
 			server.OnConnected += OnOpen;
 			server.OnReceive += OnMessage;
 			server.OnDisconnect += OnClose;
-			WriteLogMessage("Started server at " + address.ToString(), 0);
+			WriteLogMessage("Started server at " + address.ToString(), 2);
 
 			//Start reading console
 			while(true)
