@@ -48,7 +48,8 @@
 	var upKeyDown = false;
 	var downKeyDown = false;
 
-	var lastBallSpeed = 0;
+	var lastBallXSpeed = 0;
+	var lastBallYSpeed = 0;
 	var gotBallUpdate = false;
 
 	var sendCycle = true;
@@ -129,7 +130,8 @@
 			balldata = m.data.substring(4).split("|");
 			ballX = parseInt(balldata[0]);
 			ballY = parseInt(balldata[1]);
-			lastBallSpeed = parseInt(balldata[2]) / 2;
+			lastBallXSpeed = parseInt(balldata[2]) / 2;
+			lastBallYSpeed = parseInt(balldata[3]) / 2;
 			gotBallUpdate = true;
 		}
 		else if(strStartsWith(m.data, "pos"))
@@ -161,7 +163,8 @@
 		//We didn't get an update from the server, pretend the ball is moving straight
 		if(!gotBallUpdate)
 		{
-			ballX += lastBallSpeed;
+			ballX += lastBallXSpeed;
+			ballY += lastBallYSpeed;
 		}
 		gotBallUpdate = false;
 
