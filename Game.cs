@@ -131,11 +131,11 @@ namespace PongServer
 			}
 			if(ballPos.y > playfieldSize.y && ballSpeed.y > 0)
 			{
-				ballPos.y *= -1;
+				ballSpeed.y *= -1;
 			}
 			if(ballPos.y < 0 && ballSpeed.y < 0)
 			{
-				ballPos.y *= -1;
+				ballSpeed.y *= -1;
 			}
 		}
 
