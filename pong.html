@@ -95,6 +95,7 @@
 
 	function connected()
 	{
+		socket.send("name" + playerName);
 		setInfoText("Connected, waiting for message from server.");
 	}
 
