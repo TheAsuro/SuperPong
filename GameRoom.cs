@@ -49,6 +49,7 @@ namespace PongServer
 			}
 		}
 
+		//A player left, stop the game and remove the player
 		public void RemovePlayerFromRoom(UserContext removePlayer)
 		{
 			if(removePlayer.Equals(firstPlayer))
@@ -92,10 +93,8 @@ namespace PongServer
 			}
 		}
 		
-		//Let's a go
 		private void StartNewGame()
 		{
-			SendToBoth("new");
 			myGame = new Game();
 
 			tickTimer = new Timer(26);
@@ -103,20 +102,23 @@ namespace PongServer
 			tickTimer.Enabled = true;
 		}
 
+		//Called every 26 milliseconds
 		private void Update(object sender, ElapsedEventArgs e)
 		{
 			myGame.Update();
-			string leftBallString = "ball" + myGame.GetBallPosition(false).ToString() + "|" + myGame.GetBallSpeed(false).x;
-			string rightBallString = "ball" + myGame.GetBallPosition(true).ToString() + "|" + myGame.GetBallSpeed(true).x;
+			string leftBallString = "ball" + myGame.GetBallPosition(false) + "|" + myGame.GetBallSpeed(false).x;
+			string rightBallString = "ball" + myGame.GetBallPosition(true) + "|" + myGame.GetBallSpeed(true).x; //Send reversed values for right player
 			SendToBoth(leftBallString, rightBallString);
 		}
-		
+
+		//Send the same message to both players
 		private void SendToBoth(string message)
 		{
 			firstPlayer.Send(message);
 			secondPlayer.Send(message);
 		}
 
+		//Send a different message to each player
 		private void SendToBoth(string left, string right)
 		{
 			firstPlayer.Send(left);

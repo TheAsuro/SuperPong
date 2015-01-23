@@ -7,15 +7,23 @@ using Alchemy.Classes;
 
 namespace PongServer
 {
+	enum LogLevel
+	{
+		none = 0,
+		connections = 1,
+		messages = 2
+	}
+
 	class MainClass
 	{
-		private static List<UserContext> allSockets;
+		private static Dictionary<UserContext,string> allSockets;
 		private static List<GameRoom> roomList;
+		private static LogLevel myLogLevel = LogLevel.connections;
 
 		public static void Main (string[] args)
 		{
 			//Create lists
-			allSockets = new List<UserContext>();
+			allSockets = new Dictionary<UserContext,string>();
 			roomList = new List<GameRoom>();
 
 			//Load ip address and port
@@ -29,6 +37,19 @@ namespace PongServer
 				if(int.TryParse(args[0], out newPort))
 				{
 					port = newPort;
+				}
+			}
+
+			//Use second argument as log level if possible
+			if(args.Length >= 2)
+			{
+				int level;
+				if(int.TryParse(args[1], out level))
+				{
+					if(level >= 0 && level <= 2)
+					{
+						myLogLevel = (LogLevel)level;
+					}
 				}
 			}
 
@@ -49,27 +70,27 @@ namespace PongServer
 				if(message.ToLower().Equals("exit"))
 					break;
 				
-				foreach(UserContext socket in allSockets)
+				foreach(UserContext socket in allSockets.Keys)
 				{
 					socket.Send(message);
 				}
 			}
 
 			server.Stop();
+			//TODO program doesn't stop here
 		}
 		
 		private static void OnOpen(UserContext connection)
 		{
-			allSockets.Add(connection);
-			Console.WriteLine("Connection opened. ID: " + allSockets.IndexOf(connection));
+			allSockets.Add(connection,"");
+			Console.WriteLine("Connection opened.");
 			FindRoomForPlayer(connection);
 		}
 		
 		private static void OnClose(UserContext connection)
 		{
-			string oldId = allSockets.IndexOf(connection).ToString();
+			Console.WriteLine("Connection closed. Name: " + allSockets[connection]);
 			allSockets.Remove(connection);
-			Console.WriteLine("Connection closed. ID: " + oldId);
 
 			//Look through the rooms to find the disconnected player
 			GameRoom room = FindRoomWithPlayer(connection);
@@ -129,7 +150,11 @@ namespace PongServer
 
 		private static void InterpretMessage(UserContext user, string message)
 		{
-			if(message.StartsWith("pos"))
+			if(message.StartsWith("name"))
+			{
+				allSockets[user] = message.Substring(4);
+			}
+			else if(message.StartsWith("pos"))
 			{
 				int pos;
 				if(int.TryParse(message.Substring(3), out pos))

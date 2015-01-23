@@ -72,14 +72,16 @@ namespace PongServer
 		{
 			Reset();
 		}
-		
+
+		//Reset everything
 		private void Reset()
 		{
 			leftPoints = 0;
 			rightPoints = 0;
 			ResetBall(defaultStartSpeed);
 		}
-		
+
+		//Reset ball and cursors
 		private void ResetBall(int startSpeed)
 		{
 			ballPos = new Vector2(playfieldSize.x / 2, playfieldSize.y / 2);
@@ -102,6 +104,7 @@ namespace PongServer
 			}
 		}
 
+		//Someone got a point
 		private void Score(string side)
 		{
 			if(side.Equals("l"))
@@ -118,6 +121,7 @@ namespace PongServer
 			}
 		}
 
+		//Check if someone reached the maximum points and won the round
 		private void EndCheck()
 		{
 			if(leftPoints >= maxPoints)
