@@ -150,7 +150,7 @@ namespace PongServer
 
 		private static void InterpretMessage(UserContext user, string message)
 		{
-			WriteLogMessage(message, 2);
+			WriteLogMessage(message, 0);
 
 			if(message.StartsWith("name"))
 			{
