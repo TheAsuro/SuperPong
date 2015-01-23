@@ -13,13 +13,13 @@ namespace PongServer
 {
 	public struct Vector2
 	{
-		public Vector2(int pX, int pY)
+		public Vector2(float pX, float pY)
 		{
 			x = pX;
 			y = pY;
 		}
 
-		public Vector2 Reverse(int playfieldWidth)
+		public Vector2 Reverse(float playfieldWidth)
 		{
 			return new Vector2(playfieldWidth - x, y);
 		}
@@ -49,8 +49,8 @@ namespace PongServer
 			return x + "|" + y;
 		}
 	
-		public int x;
-		public int y;
+		public float x;
+		public float y;
 	}
 
 	public class Game
@@ -65,8 +65,8 @@ namespace PongServer
 		private Vector2 ballPos = new Vector2(0,0);
 		private Vector2 ballSpeed = new Vector2(0,0);
 
-		private Vector2 playfieldSize = new Vector2(1280, 720);
-		
+		private Vector2 playfieldSize = new Vector2(1280f, 720f);
+
 		public int leftVerticalPos = 0;
 		public int rightVerticalPos = 0;
 		
@@ -91,13 +91,13 @@ namespace PongServer
 		{
 			ballPos = new Vector2(playfieldSize.x / 2, playfieldSize.y / 2);
 			ballSpeed = new Vector2(startSpeed, 0);
-			leftVerticalPos = playfieldSize.y / 2;
-			rightVerticalPos = playfieldSize.y / 2;
+			leftVerticalPos = (int)playfieldSize.y / 2;
+			rightVerticalPos = (int)playfieldSize.y / 2;
 		}
 		
 		public void Update()
 		{
-			int oldX = ballPos.x;
+			float oldX = ballPos.x;
 
 			//Move ball
 			ballPos = ballPos + ballSpeed;
