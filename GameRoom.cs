@@ -21,31 +21,35 @@ namespace PongServer
 		UserContext secondPlayer;
 
 		private Timer tickTimer;
-		private int ID
-		{ get { return ID; } }
+		private readonly Guid guid;
+		private bool isRunning
+		{
+			get { return secondPlayer != null; }
+		}
 		
 		private Game myGame;
 	
 		//Create a room, one player is already connected to the server
-		public GameRoom(UserContext socket)
+		public GameRoom(UserContext socket, Guid pGuid)
 		{
+			guid = pGuid;
 			firstPlayer = socket;
 			firstPlayer.Send("wait");
-			MainClass.WriteLogMessage("Created new room.");
+			MainClass.WriteLogMessage("Created room with ID " + guid);
 		}
-		
+
 		//Let a second player join
 		public void AddSecondPlayer(UserContext socket)
 		{
 			if(!isFull())
 			{
 				secondPlayer = socket;
-				MainClass.WriteLogMessage("A room was filled.");
+				MainClass.WriteLogMessage("Room " + guid + " was filled.");
 				StartNewGame();
 			}
 			else
 			{
-				throw new InvalidOperationException("A third player tried to join the game!");
+				throw new InvalidOperationException("A third player tried to join game " + guid + " !");
 			}
 		}
 
@@ -64,7 +68,7 @@ namespace PongServer
 
 			tickTimer.Enabled = false;
 			firstPlayer.Send("wait");
-			MainClass.WriteLogMessage("Removed player from a room.");
+			MainClass.WriteLogMessage("Removed player from room " + guid + " .");
 		}
 
 		public List<UserContext> GetPlayers()
@@ -130,6 +134,19 @@ namespace PongServer
 		{
 			firstPlayer.Send(left);
 			secondPlayer.Send(right);
+		}
+
+		//Stops the timer so no thread is running, should be called before removing the room
+		public void StopTimer()
+		{
+			if(isRunning)
+			{
+				tickTimer.Stop();
+				tickTimer.Close();
+				tickTimer.Dispose();
+				tickTimer = null;
+				MainClass.WriteLogMessage("Stopped timer of room " + guid + " .", 1);
+			}
 		}
 		
 		public bool isFull()

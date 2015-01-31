@@ -77,8 +77,20 @@ namespace PongServer
 				}
 			}
 
+			//Main loop finished, clean up everything
+			foreach(UserContext user in allSockets.Keys)
+			{
+				user.Disconnect();
+			}
+
 			server.Stop();
-			//TODO program doesn't stop here
+
+			foreach(GameRoom room in roomList)
+			{
+				room.StopTimer();
+			}
+
+			//Program doesn't end here, server thread still seems to be running... WHY
 		}
 		
 		private static void OnOpen(UserContext connection)
@@ -106,6 +118,7 @@ namespace PongServer
 			{
 				//Last player disconnected, remove room
 				string roomId = roomList.IndexOf(room).ToString();
+				room.StopTimer();
 				roomList.Remove(room);
 				WriteLogMessage("Removed room #" + roomId + ".");
 				return;
@@ -131,7 +144,7 @@ namespace PongServer
 			}
 			
 			//No free rooms, create one
-			GameRoom newRoom = new GameRoom(socket);
+			GameRoom newRoom = new GameRoom(socket, Guid.NewGuid());
 			roomList.Add(newRoom);
 		}
 
