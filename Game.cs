@@ -46,7 +46,7 @@ namespace PongServer
 
 		public string ToIntString()
 		{
-			return (int)x + "|" + (int)y;
+			return ((int)x) + "|" + ((int)y);
 		}
 
 		public override string ToString()
